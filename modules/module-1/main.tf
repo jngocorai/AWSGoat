@@ -27,6 +27,9 @@ resource "aws_lambda_function" "react_lambda_app" {
   runtime       = "nodejs14.x"
   role          = aws_iam_role.blog_app_lambda.arn
   depends_on    = [data.archive_file.lambda_zip, null_resource.file_replacement_lambda_react]
+  tags = {
+    yor_trace = "a08cf28a-d9f7-43ca-a8b7-7fdee20fa791"
+  }
 }
 
 
@@ -50,6 +53,9 @@ resource "aws_iam_role" "blog_app_lambda" {
   ]
 }
 EOF
+  tags = {
+    yor_trace = "bc16042d-f32a-4f3a-8c58-b2928143883e"
+  }
 }
 
 
@@ -69,6 +75,9 @@ resource "aws_api_gateway_rest_api" "api" {
     types = [
       "REGIONAL"
     ]
+  }
+  tags = {
+    yor_trace = "cb574dd4-df44-49c8-8ea3-ce5c845478f7"
   }
 }
 
@@ -161,6 +170,9 @@ resource "aws_api_gateway_stage" "api" {
   stage_name    = "prod"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   deployment_id = aws_api_gateway_deployment.api.id
+  tags = {
+    yor_trace = "5d5177f6-d9b5-4662-aa9c-1b1b5eda7794"
+  }
 }
 
 
@@ -176,6 +188,9 @@ resource "aws_api_gateway_rest_api" "apiLambda_ba" {
     types = [
       "REGIONAL"
     ]
+  }
+  tags = {
+    yor_trace = "999168ed-48d0-43fd-aab7-d687a7ace5ca"
   }
 }
 
@@ -3094,6 +3109,9 @@ resource "aws_lambda_function" "lambda_ba_data" {
       JWT_SECRET = "T2BYL6#]zc>Byuzu"
     }
   }
+  tags = {
+    yor_trace = "5bec53c0-3650-449c-989b-28f0d656d81c"
+  }
 }
 
 
@@ -3117,6 +3135,9 @@ resource "aws_iam_role" "blog_app_lambda_python" {
   ]
 }
 EOF
+  tags = {
+    yor_trace = "d1d42e63-50fc-4a36-95e4-a2d30f667423"
+  }
 }
 
 
@@ -3156,6 +3177,9 @@ resource "aws_iam_policy" "lambda_data_policies" {
     ],
     "Version" : "2012-10-17"
   })
+  tags = {
+    yor_trace = "0cd976d3-338d-4447-a41e-5b5b8c209a72"
+  }
 }
 
 
@@ -3197,6 +3221,7 @@ resource "aws_s3_bucket" "bucket_upload" {
   tags = {
     Name        = "Production bucket"
     Environment = "Prod"
+    yor_trace   = "fbaa8385-f810-4864-9383-e51cfc520133"
   }
 }
 
@@ -3243,6 +3268,9 @@ resource "aws_s3_bucket_object" "upload_folder_prod" {
   source       = "./resources/s3/webfiles/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.bucket_upload, null_resource.file_replacement_api_gw]
+  tags = {
+    yor_trace = "d56b2e65-d376-4e74-af88-0694fb0569b0"
+  }
 }
 
 
@@ -3254,6 +3282,7 @@ resource "aws_s3_bucket" "dev" {
   tags = {
     Name        = "Development bucket"
     Environment = "Dev"
+    yor_trace   = "2f93965c-fdc8-402f-ae03-2751ca86e6e7"
   }
 }
 resource "aws_s3_bucket_policy" "allow_access_for_dev" {
@@ -3282,6 +3311,9 @@ resource "aws_s3_bucket_object" "upload_folder_dev" {
   source       = "./resources/s3/webfiles/build/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.dev, null_resource.file_replacement_ec2_ip]
+  tags = {
+    yor_trace = "352d3cb3-da7f-420c-9e8d-79d351b2a036"
+  }
 }
 resource "aws_s3_bucket_object" "upload_folder_dev_2" {
   for_each     = fileset("./resources/s3/shared/", "**")
@@ -3291,6 +3323,9 @@ resource "aws_s3_bucket_object" "upload_folder_dev_2" {
   source       = "./resources/s3/shared/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.dev, null_resource.file_replacement_ec2_ip]
+  tags = {
+    yor_trace = "3a14f434-13c2-487b-9733-ea841a572084"
+  }
 }
 
 
@@ -3303,6 +3338,7 @@ resource "aws_s3_bucket" "bucket_temp" {
   tags = {
     Name        = "Temporary bucket"
     Environment = "Dev"
+    yor_trace   = "74363600-6de1-48f9-8021-0caef28fb985"
   }
 }
 
@@ -3315,6 +3351,9 @@ resource "aws_s3_bucket_object" "upload_temp_object" {
   source       = "./resources/s3/webfiles/build/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.bucket_upload, null_resource.file_replacement_lambda_react]
+  tags = {
+    yor_trace = "5f122239-fe60-4570-97bd-da20a1dcc170"
+  }
 }
 resource "aws_s3_bucket_object" "upload_temp_object_2" {
   for_each     = fileset("./resources/s3/shared/", "**")
@@ -3324,6 +3363,9 @@ resource "aws_s3_bucket_object" "upload_temp_object_2" {
   source       = "./resources/s3/shared/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.bucket_upload, null_resource.file_replacement_lambda_react]
+  tags = {
+    yor_trace = "96b4db81-cd26-453e-9e03-bf4cf4c982d6"
+  }
 }
 
 /* Creating a S3 Bucket for Terraform state file upload. */
@@ -3333,6 +3375,7 @@ resource "aws_s3_bucket" "bucket_tf_files" {
   tags = {
     Name        = "Do not delete Bucket"
     Environment = "Dev"
+    yor_trace   = "48c0a648-0d2c-4c45-bf5f-cbc5604b906c"
   }
 }
 
@@ -3344,13 +3387,15 @@ resource "aws_vpc" "goat_vpc" {
   instance_tenancy     = "default"
   enable_dns_hostnames = true
   tags = {
-    Name = "AWS_GOAT_VPC"
+    Name      = "AWS_GOAT_VPC"
+    yor_trace = "c40fe505-c20b-427e-bf4c-a241501758e9"
   }
 }
 resource "aws_internet_gateway" "goat_gw" {
   vpc_id = aws_vpc.goat_vpc.id
   tags = {
-    Name = "app gateway"
+    Name      = "app gateway"
+    yor_trace = "7240b1ab-25fc-40ba-a9c7-42a50650f244"
   }
 }
 resource "aws_subnet" "goat_subnet" {
@@ -3359,7 +3404,8 @@ resource "aws_subnet" "goat_subnet" {
   availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
   tags = {
-    Name = "AWS_GOAT App subnet"
+    Name      = "AWS_GOAT App subnet"
+    yor_trace = "08e48277-fb10-4ee3-bc9d-adf7d3ab7b5c"
   }
 }
 
@@ -3368,6 +3414,9 @@ resource "aws_route_table" "goat_rt" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.goat_gw.id
+  }
+  tags = {
+    yor_trace = "1ceab7b7-83c6-4161-b0cf-36e1109c0bfa"
   }
 }
 resource "aws_route_table_association" "goat_public_rta" {
@@ -3393,7 +3442,8 @@ resource "aws_security_group" "goat_sg" {
   }
 
   tags = {
-    Name = "AWS_GOAT_sg"
+    Name      = "AWS_GOAT_sg"
+    yor_trace = "78cfa6de-1a66-4b6c-81ee-8c688234b383"
   }
 }
 
@@ -3402,6 +3452,9 @@ resource "aws_security_group" "goat_sg" {
 resource "aws_iam_instance_profile" "goat_iam_profile" {
   name = "AWS_GOAT_ec2_profile"
   role = aws_iam_role.goat_role.name
+  tags = {
+    yor_trace = "29f5df41-6aaf-42ff-9539-f5fd7134ad01"
+  }
 }
 resource "aws_iam_role" "goat_role" {
   name               = "AWS_GOAT_ROLE"
@@ -3421,6 +3474,9 @@ resource "aws_iam_role" "goat_role" {
     ]
 }
 EOF
+  tags = {
+    yor_trace = "f8ea5b97-b03e-4597-b610-d8a0d580c38b"
+  }
 }
 resource "aws_iam_role_policy_attachment" "goat_s3_policy" {
   role       = aws_iam_role.goat_role.name
@@ -3483,6 +3539,9 @@ resource "aws_iam_policy" "goat_inline_policy_2" {
     ],
     "Version" : "2012-10-17"
   })
+  tags = {
+    yor_trace = "2cfef869-0e92-4cff-87aa-4c55d9487130"
+  }
 }
 
 data "template_file" "goat_script" {
@@ -3514,7 +3573,8 @@ resource "aws_instance" "goat_instance" {
   subnet_id            = aws_subnet.goat_subnet.id
   security_groups      = [aws_security_group.goat_sg.id]
   tags = {
-    Name = "AWS_GOAT_DEV_INSTANCE"
+    Name      = "AWS_GOAT_DEV_INSTANCE"
+    yor_trace = "bf376363-0605-415a-b31b-526fe139a059"
   }
   user_data = data.template_file.goat_script.rendered
   depends_on = [
@@ -3534,6 +3594,9 @@ resource "aws_dynamodb_table" "users_table" {
     name = "email"
     type = "S"
   }
+  tags = {
+    yor_trace = "519c6b35-5ec9-4538-a9e2-1796580ee169"
+  }
 }
 resource "aws_dynamodb_table" "posts_table" {
   name           = "blog-posts"
@@ -3545,6 +3608,9 @@ resource "aws_dynamodb_table" "posts_table" {
   attribute {
     name = "id"
     type = "S"
+  }
+  tags = {
+    yor_trace = "0076e3f5-246f-41e2-bc4b-a9681f9b6078"
   }
 }
 
